@@ -1,0 +1,98 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: api-gateway
+  cloud:
+    gateway:
+      discovery:
+        locator:
+          enabled: true
+          lower-case-service-id: true
+      routes:
+        # Auth Service (path: /auth/**)
+        - id: auth-service
+          uri: lb://auth-service
+          predicates:
+            - Path=/auth/**
+
+        # Product Service (path: /products/**)
+        - id: product-service
+          uri: lb://product-service
+          predicates:
+            - Path=/products/**
+
+        # Warehouse Service (path: /warehouses/**)
+        - id: warehouse-service
+          uri: lb://warehouse-service
+          predicates:
+            - Path=/warehouses/**
+
+        # Supplier Service (path: /suppliers/**)
+        - id: supplier-service
+          uri: lb://supplier-service
+          predicates:
+            - Path=/suppliers/**
+
+        # Purchase Service (path: /purchases/**)
+        - id: purchase-service
+          uri: lb://purchase-service
+          predicates:
+            - Path=/purchases/**
+
+        # Movement Service (path: /api/v1/movements/**)
+        - id: movement-service
+          uri: lb://movement-service
+          predicates:
+            - Path=/api/v1/movements/**
+
+        # Alert Service (path: /api/v1/alerts/**)
+        - id: alert-service
+          uri: lb://alert-service
+          predicates:
+            - Path=/api/v1/alerts/**
+
+        # Report Service (path: /api/v1/reports/**)
+        - id: report-service
+          uri: lb://report-service
+          predicates:
+            - Path=/api/v1/reports/**
+
+      # Global CORS configuration for React frontend
+      globalcors:
+        cors-configurations:
+          '[/**]':
+            allowedOrigins:
+              - "http://localhost:5173"
+              - "http://localhost:3000"
+            allowedMethods:
+              - GET
+              - POST
+              - PUT
+              - DELETE
+              - PATCH
+              - OPTIONS
+            allowedHeaders: "*"
+            allowCredentials: true
+            maxAge: 3600
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka/
+  instance:
+    prefer-ip-address: true
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,gateway
+  endpoint:
+    gateway:
+      enabled: true
+
+logging:
+  level:
+    org.springframework.cloud.gateway: DEBUG
